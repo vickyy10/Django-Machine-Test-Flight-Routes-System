@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>⏱️ Longest Flight Route</h2>
+            <a href="{% url 'route_list' %}" class="btn btn-outline-secondary">View All Routes</a>
+        </div>
+        
+        {% if longest_routes %}
+            <div class="alert alert-warning">
+                <h4>Maximum Duration: {{ max_duration }} minutes</h4>
+                <p class="mb-0">This is the longest flight route{% if longest_routes.count > 1 %}s{% endif %} in the system.</p>
+            </div>
+            
+            <div class="row">
+                {% for route in longest_routes %}
+                <div class="col-md-6 mb-4">
+                    <div class="card border-warning">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="card-title mb-0">
+                                🏆 Longest Route {% if longest_routes.count > 1 %}#{{ forloop.counter }}{% endif %}
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="route-visual text-center mb-3">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <div class="airport-box bg-primary text-white p-3 rounded">
+                                        <strong>{{ route.from_airport.code }}</strong><br>
+                                        <small>{{ route.from_airport.city }}</small>
+                                    </div>
+                                    <div class="route-arrow mx-3">
+                                        <span class="fs-1">→</span>
+                                        <div class="duration-badge">
+                                            <span class="badge bg-danger fs-6">{{ route.duration }} min</span>
+                                        </div>
+                                    </div>
+                                    <div class="airport-box bg-success text-white p-3 rounded">
+                                        <strong>{{ route.to_airport.code }}</strong><br>
+                                        <small>{{ route.to_airport.city }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th width="30%">From Airport</th>
+                                    <td>
+                                        <strong>{{ route.from_airport.code }}</strong> - 
+                                        {{ route.from_airport.name }}, {{ route.from_airport.city }}, {{ route.from_airport.country }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>To Airport</th>
+                                    <td>
+                                        <strong>{{ route.to_airport.code }}</strong> - 
+                                        {{ route.to_airport.name }}, {{ route.to_airport.city }}, {{ route.to_airport.country }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Position</th>
+                                    <td><span class="badge bg-secondary">{{ route.position }}</span></td>
+                                </tr>
+                                <tr>
+                                    <th>Duration</th>
+                                    <td>
+                                        <span class="badge bg-danger fs-6">{{ route.duration }} minutes 
+                                            {% if route.duration >= 60 %}({% widthratio route.duration 60 1 %} hours){% endif %}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Direction</th>
+                                    <td>
+                                        <span class="badge {% if route.direction == 'L' %}bg-info{% else %}bg-primary{% endif %}">
+                                            {{ route.get_direction_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="alert alert-info mt-3">
+                <strong>Total routes with maximum duration:</strong> {{ longest_routes.count }}
+            </div>
+        {% else %}
+            <div class="alert alert-warning text-center">
+                <h4>No routes found!</h4>
+                <p>There are no flight routes in the system to analyze.</p>
+                <a href="{% url 'add_route' %}" class="btn btn-primary">Add First Route</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .airport-box {
+        min-width: 100px;
+        text-align: center;
+    }
+    .route-arrow {
+        position: relative;
+        text-align: center;
+    }
+    .duration-badge {
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+    }
+</style>
+{% endblock %}

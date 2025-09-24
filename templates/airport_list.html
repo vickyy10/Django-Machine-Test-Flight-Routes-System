@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>🏢 Airports List</h2>
+            <a href="{% url 'add_airport' %}" class="btn btn-primary">➕ Add New Airport</a>
+        </div>
+        
+        {% if airports %}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Code</th>
+                            <th>Name</th>
+                            <th>City</th>
+                            <th>Country</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for airport in airports %}
+                        <tr>
+                            <td><strong class="text-primary">{{ airport.code }}</strong></td>
+                            <td>{{ airport.name }}</td>
+                            <td>{{ airport.city }}</td>
+                            <td>{{ airport.country }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="alert alert-info mt-3">
+                <strong>Total Airports:</strong> {{ airports.count }}
+            </div>
+        {% else %}
+            <div class="alert alert-warning text-center">
+                <h4>No airports found!</h4>
+                <p>There are no airports in the system yet.</p>
+                <a href="{% url 'add_airport' %}" class="btn btn-primary">Add First Airport</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
