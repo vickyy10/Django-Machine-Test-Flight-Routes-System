@@ -21,5 +21,4 @@ urlpatterns = [
     
     # Question 3: Shortest Route Between Airports
     path('shortest-route/', views.shortest_route, name='shortest_route'),
-    # path('shortest-route/', views.shortest_route_between_airports, name='shortest_route'),
 ]
