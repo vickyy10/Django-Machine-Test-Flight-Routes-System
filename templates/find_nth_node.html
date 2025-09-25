@@ -53,59 +53,90 @@
     <div class="col-md-6">
         {% if result %}
             <div class="card">
-                <div class="card-header {% if result.error %}bg-danger{% else %}bg-success{% endif %} text-white">
+                <div class="card-header {% if result.success %}bg-success{% else %}bg-danger{% endif %} text-white">
                     <h3 class="card-title mb-0">Search Result</h3>
                 </div>
                 <div class="card-body">
-                    {% if result.error %}
+                    {% if not result.success %}
                         <div class="alert alert-danger">
                             <h5>❌ Error</h5>
                             <p class="mb-0">{{ result.error }}</p>
+                            
+                            {% if result.partial_path %}
+                                <hr>
+                                <h6>Partial Path Completed:</h6>
+                                <div class="path-display mb-2">
+                                    <strong>
+                                        {% for airport in result.partial_path %}
+                                            {{ airport.code }}{% if not forloop.last %} → {% endif %}
+                                        {% endfor %}
+                                    </strong>
+                                </div>
+                                <p class="mb-0">Steps completed: {{ result.steps_completed }}</p>
+                            {% endif %}
                         </div>
                     {% else %}
                         <div class="alert alert-success">
-                            <h5>✅ Node Found!</h5>
+                            <h5>✅ Successfully Found Node {{ result.n }}!</h5>
+                            <p class="mb-0">Direction: {{ result.direction_searched }}</p>
                         </div>
                         
+                        <div class="path-info mb-3">
+                            <h6>Full Path:</h6>
+                            <div class="path-display p-2 bg-light rounded mb-2">
+                                <strong>{{ result.path_display }}</strong>
+                            </div>
+                            <p>Total steps: {{ result.total_steps }}</p>
+                        </div>
+                        
+                        <div class="node-info mb-3">
+                            <h6>Nth Node Found:</h6>
+                            <div class="p-2 bg-info text-dark rounded">
+                                <strong>{{ result.nth_node.code }}</strong> - {{ result.nth_node.name }}
+                            </div>
+                        </div>
+                        
+                        {% if result.final_route %}
                         <div class="route-info">
-                            <h6>Route Details:</h6>
+                            <h6>Final Route Details:</h6>
                             <table class="table table-bordered">
                                 <tr>
                                     <th>From Airport</th>
                                     <td>
-                                        <strong>{{ result.route.from_airport.code }}</strong> - 
-                                        {{ result.route.from_airport.name }}
+                                        <strong>{{ result.final_route.from_airport.code }}</strong> - 
+                                        {{ result.final_route.from_airport.name }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <th>To Airport</th>
                                     <td>
-                                        <strong>{{ result.route.to_airport.code }}</strong> - 
-                                        {{ result.route.to_airport.name }}
+                                        <strong>{{ result.final_route.to_airport.code }}</strong> - 
+                                        {{ result.final_route.to_airport.name }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <th>Position</th>
-                                    <td><span class="badge bg-secondary">{{ result.route.position }}</span></td>
+                                    <td><span class="badge bg-secondary">{{ result.final_route.position }}</span></td>
                                 </tr>
                                 <tr>
                                     <th>Direction</th>
                                     <td>
-                                        <span class="badge {% if result.direction == 'L' %}bg-info{% else %}bg-primary{% endif %}">
-                                            {{ result.route.get_direction_display }}
+                                        <span class="badge {% if result.final_route.position == 'L' %}bg-info{% else %}bg-primary{% endif %}">
+                                            {{ result.direction_searched }}
                                         </span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th>Duration</th>
+                                    <th>Distance</th>
                                     <td>
-                                        <span class="badge {% if result.route.duration > 300 %}bg-danger{% elif result.route.duration > 180 %}bg-warning{% else %}bg-success{% endif %}">
-                                            {{ result.route.duration }} minutes
+                                        <span class="badge {% if result.final_route.distance > 1000 %}bg-danger{% elif result.final_route.distance > 500 %}bg-warning{% else %}bg-success{% endif %}">
+                                            {{ result.final_route.distance }} miles
                                         </span>
                                     </td>
                                 </tr>
                             </table>
                         </div>
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>
@@ -119,10 +150,10 @@
                     <ul>
                         <li><strong>Start Airport:</strong> Choose your starting point</li>
                         <li><strong>N Value:</strong> The position number to find (1 = first node)</li>
-                        <li><strong>Direction:</strong> Left (decreasing position) or Right (increasing position)</li>
+                        <li><strong>Direction:</strong> Left (L) or Right (R)</li>
                     </ul>
                     <div class="alert alert-info">
-                        <small>Example: To find the 3rd airport to the right from JFK, set N=3 and Direction=Right</small>
+                        <small>Example: To find the 3rd airport to the right from JFK, set N=3 and Direction=R</small>
                     </div>
                 </div>
             </div>

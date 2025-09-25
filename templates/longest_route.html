@@ -4,13 +4,13 @@
 <div class="row">
     <div class="col-md-12">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>⏱️ Longest Flight Route</h2>
+            <h2>📏 Longest Flight Route</h2>
             <a href="{% url 'route_list' %}" class="btn btn-outline-secondary">View All Routes</a>
         </div>
         
         {% if longest_routes %}
             <div class="alert alert-warning">
-                <h4>Maximum Duration: {{ max_duration }} minutes</h4>
+                <h4>Maximum Distance: {{ max_distance }} km</h4>
                 <p class="mb-0">This is the longest flight route{% if longest_routes.count > 1 %}s{% endif %} in the system.</p>
             </div>
             
@@ -32,8 +32,8 @@
                                     </div>
                                     <div class="route-arrow mx-3">
                                         <span class="fs-1">→</span>
-                                        <div class="duration-badge">
-                                            <span class="badge bg-danger fs-6">{{ route.duration }} min</span>
+                                        <div class="distance-badge">
+                                            <span class="badge bg-danger fs-6">{{ route.distance }} km</span>
                                         </div>
                                     </div>
                                     <div class="airport-box bg-success text-white p-3 rounded">
@@ -59,21 +59,17 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th>Position</th>
-                                    <td><span class="badge bg-secondary">{{ route.position }}</span></td>
-                                </tr>
-                                <tr>
-                                    <th>Duration</th>
+                                    <th>Distance</th>
                                     <td>
-                                        <span class="badge bg-danger fs-6">{{ route.duration }} minutes 
-                                            {% if route.duration >= 60 %}({% widthratio route.duration 60 1 %} hours){% endif %}</span>
+                                        <span class="badge bg-danger fs-6">{{ route.distance }} km
+                                            {% if route.distance >= 1000 %}({{ route.distance|divisibleby:1000|yesno:",." }}{{ route.distance|floatformat:1 }}k km){% endif %}</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th>Direction</th>
+                                    <th>Position</th>
                                     <td>
-                                        <span class="badge {% if route.direction == 'L' %}bg-info{% else %}bg-primary{% endif %}">
-                                            {{ route.get_direction_display }}
+                                        <span class="badge {% if route.position == 'L' %}bg-info{% else %}bg-primary{% endif %}">
+                                            {{ route.get_position_display }}
                                         </span>
                                     </td>
                                 </tr>
@@ -85,7 +81,7 @@
             </div>
             
             <div class="alert alert-info mt-3">
-                <strong>Total routes with maximum duration:</strong> {{ longest_routes.count }}
+                <strong>Total routes with maximum distance:</strong> {{ longest_routes.count }}
             </div>
         {% else %}
             <div class="alert alert-warning text-center">
@@ -106,7 +102,7 @@
         position: relative;
         text-align: center;
     }
-    .duration-badge {
+    .distance-badge {
         position: absolute;
         top: -10px;
         left: 50%;
