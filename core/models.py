@@ -19,9 +19,8 @@ class Route(models.Model):
     
     from_airport = models.ForeignKey(Airport,on_delete=models.CASCADE, related_name='outgoing_routes')
     to_airport = models.ForeignKey(Airport,on_delete=models.CASCADE, related_name='incoming_routes')
-    position = models.IntegerField(validators=[MinValueValidator(1)],help_text="Position in the route sequence")
-    duration = models.IntegerField(validators=[MinValueValidator(1)],help_text="Duration in minutes")
-    direction = models.CharField(max_length=1,choices=DIRECTION_CHOICES,default='R')
+    distance = models.IntegerField(validators=[MinValueValidator(1)],help_text="distanc in km ")
+    position = models.CharField(max_length=1,choices=DIRECTION_CHOICES,default='R')
     
     class Meta:
         unique_together = ['from_airport', 'to_airport']

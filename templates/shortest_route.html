@@ -1,230 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% comment %} <div class="row">
-    <div class="col-md-12">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>⚡ Shortest Route Between Airports</h2>
-            <a href="{% url 'route_list' %}" class="btn btn-outline-secondary">View All Routes</a>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header bg-info text-white">
-                        <h4 class="card-title mb-0">Find Shortest Route</h4>
-                    </div>
-                    <div class="card-body">
-                        <form method="post">
-                            {% csrf_token %}
-                            
-                            <!-- Display form errors -->
-                            {% if form.errors %}
-                                <div class="alert alert-danger">
-                                    Please correct the errors below.
-                                </div>
-                            {% endif %}
-                            
-                            <div class="mb-3">
-                                <label for="id_from_airport" class="form-label">From Airport</label>
-                                {{ form.from_airport }}
-                                {% if form.from_airport.errors %}
-                                    <div class="text-danger">
-                                        {% for error in form.from_airport.errors %}
-                                            <small>{{ error }}</small>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="id_to_airport" class="form-label">To Airport</label>
-                                {{ form.to_airport }}
-                                {% if form.to_airport.errors %}
-                                    <div class="text-danger">
-                                        {% for error in form.to_airport.errors %}
-                                            <small>{{ error }}</small>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                            
-                            <button type="submit" class="btn btn-primary">Find Shortest Route</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            {% if result %}
-                {% if result.route %}
-                <div class="col-md-6">
-                    <div class="card border-success">
-                        <div class="card-header bg-success text-white">
-                            <h4 class="card-title mb-0">Shortest Route Found</h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="route-visual text-center mb-3">
-                                <div class="d-flex justify-content-center align-items-center">
-                                    <div class="airport-box bg-primary text-white p-3 rounded">
-                                        <strong>{{ result.route.from_airport.code }}</strong><br>
-                                        <small>{{ result.route.from_airport.city }}</small>
-                                    </div>
-                                    <div class="route-arrow mx-3">
-                                        <span class="fs-1">→</span>
-                                        <div class="duration-badge">
-                                            <span class="badge bg-danger fs-6">{{ result.route.duration }} min</span>
-                                        </div>
-                                    </div>
-                                    <div class="airport-box bg-success text-white p-3 rounded">
-                                        <strong>{{ result.route.to_airport.code }}</strong><br>
-                                        <small>{{ result.route.to_airport.city }}</small>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <table class="table table-bordered">
-                                <tr>
-                                    <th width="30%">From Airport</th>
-                                    <td>
-                                        <strong>{{ result.route.from_airport.code }}</strong> - 
-                                        {{ result.route.from_airport.name }}, {{ result.route.from_airport.city }}, {{ result.route.from_airport.country }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>To Airport</th>
-                                    <td>
-                                        <strong>{{ result.route.to_airport.code }}</strong> - 
-                                        {{ result.route.to_airport.name }}, {{ result.route.to_airport.city }}, {{ result.route.to_airport.country }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Duration</th>
-                                    <td>
-                                        <span class="badge bg-success fs-6">{{ result.route.duration }} minutes 
-                                            {% if result.route.duration >= 60 %}({% widthratio result.route.duration 60 1 %} hours){% endif %}</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Direction</th>
-                                    <td>
-                                        <span class="badge {% if result.route.direction == 'L' %}bg-info{% else %}bg-primary{% endif %}">
-                                            {{ result.route.get_direction_display }}
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Position</th>
-                                    <td><span class="badge bg-secondary">{{ result.route.position }}</span></td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                {% elif result.error %}
-                <div class="col-md-6">
-                    <div class="alert alert-warning">
-                        <h5>No Route Found!</h5>
-                        <p class="mb-0">{{ result.error }}</p>
-                    </div>
-                </div>
-                {% endif %}
-            {% endif %}
-        </div>
-
-        {% if result and result.all_routes %}
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title mb-0">All Routes Between These Airports</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>From Airport</th>
-                                        <th>To Airport</th>
-                                        <th>Duration</th>
-                                        <th>Direction</th>
-                                        <th>Position</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for route in result.all_routes %}
-                                    <tr>
-                                        <td>
-                                            <strong>{{ route.from_airport.code }}</strong><br>
-                                            <small>{{ route.from_airport.city }}</small>
-                                        </td>
-                                        <td>
-                                            <strong>{{ route.to_airport.code }}</strong><br>
-                                            <small>{{ route.to_airport.city }}</small>
-                                        </td>
-                                        <td>
-                                            <span class="badge {% if route == result.route %}bg-success{% else %}bg-secondary{% endif %}">
-                                                {{ route.duration }} min
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span class="badge {% if route.direction == 'L' %}bg-info{% else %}bg-primary{% endif %}">
-                                                {{ route.get_direction_display }}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-dark">{{ route.position }}</span>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-    </div>
-</div>
-
-<style>
-    /* Ensure form selects are styled properly */
-    .form-select {
-        width: 100%;
-        padding: 8px 12px;
-        border: 1px solid #ced4da;
-        border-radius: 4px;
-    }
-    
-    .airport-box {
-        min-width: 100px;
-        text-align: center;
-    }
-    .route-arrow {
-        position: relative;
-        text-align: center;
-    }
-    .duration-badge {
-        position: absolute;
-        top: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        white-space: nowrap;
-    }
-</style> {% endcomment %}
-
-
-
 <div class="row">
     <div class="col-md-12">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>⚡ Shortest Flight Route</h2>
+            <h2>📐 Shortest Flight Route</h2>
             <a href="{% url 'route_list' %}" class="btn btn-outline-secondary">View All Routes</a>
         </div>
         
         {% if shortest_routes %}
             <div class="alert alert-success">
-                <h4>Minimum Duration: {{ min_duration }} minutes</h4>
+                <h4>Minimum Distance: {{ min_distance }} km</h4>
                 <p class="mb-0">This is the shortest flight route{% if shortest_routes.count > 1 %}s{% endif %} in the system.</p>
             </div>
             
@@ -234,7 +20,7 @@
                     <div class="card border-success">
                         <div class="card-header bg-success text-white">
                             <h5 class="card-title mb-0">
-                                🏅 Shortest Route {% if shortest_routes.count > 1 %}#{{ forloop.counter }}{% endif %}
+                                🥇 Shortest Route {% if shortest_routes.count > 1 %}#{{ forloop.counter }}{% endif %}
                             </h5>
                         </div>
                         <div class="card-body">
@@ -246,8 +32,8 @@
                                     </div>
                                     <div class="route-arrow mx-3">
                                         <span class="fs-1">→</span>
-                                        <div class="duration-badge">
-                                            <span class="badge bg-success fs-6">{{ route.duration }} min</span>
+                                        <div class="distance-badge">
+                                            <span class="badge bg-success fs-6">{{ route.distance }} km</span>
                                         </div>
                                     </div>
                                     <div class="airport-box bg-info text-white p-3 rounded">
@@ -273,31 +59,20 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th>Position</th>
-                                    <td><span class="badge bg-secondary">{{ route.position }}</span></td>
-                                </tr>
-                                <tr>
-                                    <th>Duration</th>
+                                    <th>Distance</th>
                                     <td>
-                                        <span class="badge bg-success fs-6">{{ route.duration }} minutes 
-                                            {% if route.duration >= 60 %}({% widthratio route.duration 60 1 %} hours){% else %}(Very short flight){% endif %}</span>
+                                        <span class="badge bg-success fs-6">{{ route.distance }} km</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th>Direction</th>
+                                    <th>Position</th>
                                     <td>
-                                        <span class="badge {% if route.direction == 'L' %}bg-info{% else %}bg-primary{% endif %}">
-                                            {{ route.get_direction_display }}
+                                        <span class="badge {% if route.position == 'L' %}bg-info{% else %}bg-primary{% endif %}">
+                                            {{ route.get_position_display }}
                                         </span>
                                     </td>
                                 </tr>
                             </table>
-                            
-                            {% if route.duration < 60 %}
-                            <div class="alert alert-info mt-3">
-                                <small>💡 This is a very short flight route - perfect for quick connections!</small>
-                            </div>
-                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -305,10 +80,7 @@
             </div>
             
             <div class="alert alert-info mt-3">
-                <strong>Total routes with minimum duration:</strong> {{ shortest_routes.count }}
-                {% if shortest_routes.count > 1 %}
-                <br><small>Multiple routes share the same shortest duration.</small>
-                {% endif %}
+                <strong>Total routes with minimum distance:</strong> {{ shortest_routes.count }}
             </div>
         {% else %}
             <div class="alert alert-warning text-center">
@@ -329,15 +101,12 @@
         position: relative;
         text-align: center;
     }
-    .duration-badge {
+    .distance-badge {
         position: absolute;
         top: -10px;
         left: 50%;
         transform: translateX(-50%);
         white-space: nowrap;
-    }
-    .card-border-success {
-        border: 2px solid #198754;
     }
 </style>
 {% endblock %}

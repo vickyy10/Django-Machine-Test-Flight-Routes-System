@@ -26,59 +26,19 @@ class AirportForm(forms.ModelForm):
 class RouteForm(forms.ModelForm):
     class Meta:
         model = Route
-        fields = ['from_airport', 'to_airport', 'position', 'duration', 'direction']
+        fields = ['from_airport', 'to_airport', 'position', 'distance']
         widgets = {
             'from_airport': forms.Select(attrs={'class': 'form-control'}),
             'to_airport': forms.Select(attrs={'class': 'form-control'}),
-            'position': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
-            'duration': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
-            'direction': forms.Select(attrs={'class': 'form-control'}),
+            'position': forms.Select(attrs={'class': 'form-control'}),
+            'distance': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
         }
         labels = {
             'from_airport': 'From Airport',
             'to_airport': 'To Airport',
             'position': 'Position',
-            'duration': 'Duration (minutes)',
-            'direction': 'Direction',
+            'distance': 'Distance (km)'
         }
-
-
-
-class AirportRouteForm(forms.Form):
-    from_airport_code = forms.ModelChoiceField(
-        queryset=Airport.objects.all(),
-        label="From Airport",
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
-    to_airport_code = forms.ModelChoiceField(
-        queryset=Airport.objects.all(),
-        label="To Airport",
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
-    position = forms.IntegerField(
-        min_value=1,
-        label="Position",
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'min': '1'})
-    )
-    duration = forms.IntegerField(
-        min_value=1,
-        label="Duration (minutes)",
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'min': '1'})
-    )
-
-    def clean(self):
-        cleaned_data = super().clean()
-        from_airport = cleaned_data.get('from_airport_code')
-        to_airport = cleaned_data.get('to_airport_code')
-
-        if from_airport and to_airport:
-            if from_airport == to_airport:
-                raise forms.ValidationError("From airport and To airport cannot be the same.")
-            
-            if Route.objects.filter(from_airport=from_airport, to_airport=to_airport).exists():
-                raise forms.ValidationError("A route between these airports already exists.")
-
-        return cleaned_data
 
 
 

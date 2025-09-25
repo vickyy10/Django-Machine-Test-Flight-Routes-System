@@ -18,9 +18,8 @@
                             <th>Route</th>
                             <th>From Airport</th>
                             <th>To Airport</th>
+                            <th>Distance</th>
                             <th>Position</th>
-                            <th>Duration</th>
-                            <th>Direction</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -40,16 +39,13 @@
                                 <small class="text-muted">{{ route.to_airport.city }}</small>
                             </td>
                             <td>
-                                <span class="badge bg-secondary">{{ route.position }}</span>
-                            </td>
-                            <td>
-                                <span class="badge {% if route.duration > 300 %}bg-danger{% elif route.duration > 180 %}bg-warning{% else %}bg-success{% endif %}">
-                                    {{ route.duration }} min
+                                <span class="badge {% if route.distance > 3000 %}bg-danger{% elif route.distance > 1500 %}bg-warning{% else %}bg-success{% endif %}">
+                                    {{ route.distance }} km
                                 </span>
                             </td>
                             <td>
-                                <span class="badge {% if route.direction == 'L' %}bg-info{% else %}bg-primary{% endif %}">
-                                    {{ route.get_direction_display }}
+                                <span class="badge {% if route.position == 'L' %}bg-info{% else %}bg-primary{% endif %}">
+                                    {{ route.get_position_display }}
                                 </span>
                             </td>
                         </tr>
@@ -66,10 +62,10 @@
                 </div>
                 <div class="col-md-4">
                     <div class="alert alert-success">
-                        <strong>Shortest Duration:</strong> 
-                        {% with routes|dictsort:"duration" as sorted_routes %}
+                        <strong>Shortest Distance:</strong> 
+                        {% with routes|dictsort:"distance" as sorted_routes %}
                             {% if sorted_routes %}
-                                {{ sorted_routes.0.duration }} min
+                                {{ sorted_routes.0.distance }} km
                             {% else %}
                                 N/A
                             {% endif %}
@@ -78,10 +74,10 @@
                 </div>
                 <div class="col-md-4">
                     <div class="alert alert-warning">
-                        <strong>Longest Duration:</strong> 
-                        {% with routes|dictsortreversed:"duration" as sorted_routes %}
+                        <strong>Longest Distance:</strong> 
+                        {% with routes|dictsortreversed:"distance" as sorted_routes %}
                             {% if sorted_routes %}
-                                {{ sorted_routes.0.duration }} min
+                                {{ sorted_routes.0.distance }} km
                             {% else %}
                                 N/A
                             {% endif %}
@@ -94,7 +90,7 @@
                 <h4>No routes found!</h4>
                 <p>There are no flight routes in the system yet.</p>
                 <div class="mt-3">
-                    <a href="{% url 'add_route' %}" class="btn btn-secondary me-2">Add Route (Full Form)</a>
+                    <a href="{% url 'add_route' %}" class="btn btn-secondary me-2">Add First Route</a>
                 </div>
             </div>
         {% endif %}
